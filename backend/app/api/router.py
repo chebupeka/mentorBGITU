@@ -11,6 +11,6 @@ api_router.include_router(stats.router, prefix="/stats", tags=["stats"])
 api_router.include_router(content.router, tags=["content"])  # /reviews, /resources
 
 # --- Dev B ---
-# from app.api.routes import mentors, bookings
-# api_router.include_router(mentors.router, prefix="/mentors", tags=["mentors"])
-# api_router.include_router(bookings.router, prefix="/bookings", tags=["bookings"])
+from app.api.routes import mentors, bookings
+api_router.include_router(mentors.router, prefix="/mentors", tags=["Mentors & Slots"])
+api_router.include_router(bookings.router, prefix="/bookings", tags=["Bookings"])

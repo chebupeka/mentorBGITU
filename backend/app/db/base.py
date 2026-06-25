@@ -5,3 +5,4 @@ from app.models.booking import Booking  # noqa: F401
 from app.models.content import KnowledgeResource, Review  # noqa: F401
 from app.models.mentor import Mentor  # noqa: F401
 from app.models.user import User  # noqa: F401
+from app.models.slot import Slot

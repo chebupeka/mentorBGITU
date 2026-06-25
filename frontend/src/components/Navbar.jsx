@@ -1,5 +1,7 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import Logo from './Logo.jsx'
+import { useAuth } from '../auth/AuthContext.jsx'
+import { useToast } from './Toast.jsx'
 
 const nav = [
   { to: '/', label: 'Главная' },
@@ -7,7 +9,26 @@ const nav = [
   { to: '/knowledge', label: 'База знаний' },
 ]
 
-export default function Navbar({ authed = true }) {
+function displayName(user) {
+  const name = [user?.first_name, user?.last_name].filter(Boolean).join(' ')
+  return name || user?.email || 'Профиль'
+}
+
+function initial(user) {
+  return (user?.first_name?.[0] || user?.email?.[0] || '?').toUpperCase()
+}
+
+export default function Navbar() {
+  const { isAuthed, user, logout } = useAuth()
+  const navigate = useNavigate()
+  const toast = useToast()
+
+  function onLogout() {
+    logout()
+    toast.success('Вы вышли из аккаунта')
+    navigate('/login')
+  }
+
   const content = (
     <>
       <Link to="/" className="flex items-center gap-2.5">
@@ -32,13 +53,23 @@ export default function Navbar({ authed = true }) {
         ))}
       </nav>
 
-      {authed ? (
-        <Link to="/profile" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand text-sm font-semibold text-white">
-            Л
-          </span>
-          <span className="text-sm font-medium text-ink">Леонид</span>
-        </Link>
+      {isAuthed ? (
+        <div className="flex items-center gap-3">
+          <Link to="/profile" className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand text-sm font-semibold text-white">
+              {initial(user)}
+            </span>
+            <span className="hidden text-sm font-medium text-ink sm:inline">
+              {displayName(user)}
+            </span>
+          </Link>
+          <button
+            onClick={onLogout}
+            className="text-sm font-medium text-muted transition hover:text-brand"
+          >
+            Выйти
+          </button>
+        </div>
       ) : (
         <div className="flex items-center gap-2">
           <Link to="/login" className="btn-ghost">Войти</Link>

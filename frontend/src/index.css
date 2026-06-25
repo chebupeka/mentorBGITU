@@ -25,10 +25,10 @@ body {
     @apply mx-auto w-full max-w-[1200px] px-6;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-600;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-600 active:scale-[.98];
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-slate-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-slate-50 active:scale-[.98];
   }
   .field {
     @apply w-full rounded-lg border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-slate-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20;
@@ -102,4 +102,42 @@ body {
   100% {
     opacity: 0;
   }
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ===== Полировка: анимации ===== */
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.96) translateY(6px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.anim-overlay { animation: overlay-in .15s ease-out; }
+.anim-modal { animation: modal-in .18s ease-out; }
+.anim-card { animation: card-in .35s ease-out both; }
+.anim-page { animation: page-in .25s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-overlay, .anim-modal, .anim-card, .anim-page { animation: none; }
 }

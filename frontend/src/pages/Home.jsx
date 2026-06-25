@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
+import { useApiData } from '../lib/useApi.js'
 import homeimg1 from '../../media/homeimg1.png'
 import icoProfile from '../../media/profile.png'
 import icoLupa from '../../media/lupa.png'
@@ -50,7 +51,7 @@ const team = [
   { name: 'Жинжиков Владислав Олегович', org: 'Разработчик GAP', status: 'Будущий выпускник БГИТУ', disc: 'DevOps' },
 ]
 
-const reviews = [
+const fallbackReviews = [
   {
     name: 'Иванов Иван Иванович',
     sub: 'студент 3 курса БГИТУ',
@@ -74,8 +75,14 @@ function initials(name) {
 }
 
 export default function Home() {
+  const { data: apiReviews } = useApiData('/reviews')
+  const reviews =
+    apiReviews && apiReviews.length
+      ? apiReviews.map((r) => ({ name: r.author_name, sub: r.author_sub, text: r.text }))
+      : fallbackReviews
+
   return (
-    <div className="min-h-screen bg-canvas">
+    <div className="anim-page min-h-screen bg-canvas">
       <Navbar authed={false} />
 
       {/* Hero */}

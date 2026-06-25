@@ -1,11 +1,38 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import Logo from '../components/Logo.jsx'
 import AuthBackground from '../components/AuthBackground.jsx'
+import { useAuth } from '../auth/AuthContext.jsx'
+import { useToast } from '../components/Toast.jsx'
 
 export default function Auth() {
   const [show, setShow] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
+  const { login } = useAuth()
+  const toast = useToast()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || '/profile'
+
+  async function onSubmit(e) {
+    e.preventDefault()
+    setError('')
+    setBusy(true)
+    try {
+      await login(email, password)
+      toast.success('С возвращением!')
+      navigate(from, { replace: true })
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-canvas px-4 py-12">
       <AuthBackground />
@@ -21,16 +48,26 @@ export default function Auth() {
           </p>
         </div>
 
-        <form className="mt-7 space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="mt-7 space-y-4" onSubmit={onSubmit}>
           <div>
             <label className="label">Email</label>
-            <input type="email" placeholder="your@email.bgitu.ru" className="field" />
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.bgitu.ru"
+              className="field"
+            />
           </div>
           <div>
             <label className="label">Пароль</label>
             <div className="relative">
               <input
                 type={show ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
                 className="field pr-10"
               />
@@ -44,7 +81,10 @@ export default function Auth() {
               </button>
             </div>
           </div>
-          <button type="submit" className="btn-primary w-full py-3">Войти</button>
+          {error && <p className="text-sm text-red-600">{error}</p>}
+          <button type="submit" disabled={busy} className="btn-primary w-full py-3 disabled:opacity-60">
+            {busy ? 'Вход…' : 'Войти'}
+          </button>
         </form>
 
         <p className="mt-5 text-center text-sm text-muted">

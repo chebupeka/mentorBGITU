@@ -5,6 +5,7 @@ import Reg from './pages/Reg.jsx'
 import Profile from './pages/Profile.jsx'
 import Mentors from './pages/Mentors.jsx'
 import Knowledge from './pages/Knowledge.jsx'
+import RequireAuth from './auth/RequireAuth.jsx'
 
 export default function App() {
   return (
@@ -12,9 +13,30 @@ export default function App() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Auth />} />
       <Route path="/register" element={<Reg />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/mentors" element={<Mentors />} />
-      <Route path="/knowledge" element={<Knowledge />} />
+      <Route
+        path="/profile"
+        element={
+          <RequireAuth>
+            <Profile />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/mentors"
+        element={
+          <RequireAuth>
+            <Mentors />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/knowledge"
+        element={
+          <RequireAuth>
+            <Knowledge />
+          </RequireAuth>
+        }
+      />
     </Routes>
   )
 }

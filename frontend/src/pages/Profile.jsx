@@ -1,10 +1,13 @@
-import { Calendar, Clock, MapPin, Users, Bookmark, MessageSquare } from 'lucide-react'
+import { Calendar, Clock, MapPin } from 'lucide-react'
 import Shell from '../components/Shell.jsx'
 import Logo from '../components/Logo.jsx'
 import heroProfile from '../../media/firstpage.png'
 import icoCalendar from '../../media/Calendar.png'
 import icoSuccess from '../../media/Success.png'
 import icoClock from '../../media/Clock.png'
+import icoUsers from '../../media/Users.png'
+import icoBookmark from '../../media/Bookmark.png'
+import icoMessage from '../../media/Message square.png'
 
 const stats = [
   { img: icoCalendar, value: '2', title: 'Записи', sub: 'Активные записи', tint: 'bg-brand-50' },
@@ -13,9 +16,9 @@ const stats = [
 ]
 
 const platform = [
-  { icon: Users, value: '6', title: 'Наставников', sub: 'На платформе' },
-  { icon: Bookmark, value: '7', title: 'Направлений', sub: 'Доступно' },
-  { icon: MessageSquare, value: '32', title: 'Консультации', sub: 'Проведено' },
+  { img: icoUsers, value: '6', title: 'Наставников', sub: 'На платформе' },
+  { img: icoBookmark, value: '7', title: 'Направлений', sub: 'Доступно' },
+  { img: icoMessage, value: '32', title: 'Консультации', sub: 'Проведено' },
 ]
 
 export default function Profile() {
@@ -80,8 +83,8 @@ export default function Profile() {
             <div className="mt-5 grid grid-cols-3 gap-4">
               {platform.map((p) => (
                 <div key={p.title}>
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand">
-                    <p.icon size={18} />
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50">
+                    <img src={p.img} alt="" className="h-5 w-5 object-contain" />
                   </div>
                   <div className="text-xl font-extrabold text-ink">{p.value}</div>
                   <div className="text-xs font-semibold text-ink">{p.title}</div>

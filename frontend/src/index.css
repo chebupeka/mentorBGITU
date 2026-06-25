@@ -40,3 +40,66 @@ body {
     @apply rounded-2xl border border-line bg-white shadow-soft;
   }
 }
+
+/* ===== Анимированный фон страниц входа/регистрации ===== */
+@keyframes auth-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(60px, 44px);
+  }
+}
+@keyframes auth-drift2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-66px, 30px) scale(1.15);
+  }
+}
+
+/* ===== Анимация зелёной галочки (успешная запись) ===== */
+@keyframes check-ring {
+  from {
+    stroke-dashoffset: 214;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes check-draw {
+  0%,
+  32% {
+    stroke-dashoffset: 62;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes check-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes check-pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.45;
+  }
+  70% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}

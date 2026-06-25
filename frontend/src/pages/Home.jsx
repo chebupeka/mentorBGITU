@@ -102,10 +102,16 @@ export default function Home() {
         <h2 className="text-2xl font-bold text-ink">Как это работает?</h2>
         <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((s) => (
-            <div key={s.title} className="card p-6">
-              <img src={s.img} alt="" className="h-14 w-14 object-contain" />
-              <h3 className="mt-4 text-base font-semibold text-ink">{s.title}</h3>
-              <p className="mt-2 text-sm text-muted">{s.text}</p>
+            <div key={s.title}>
+              <div className="relative h-40 w-40 overflow-hidden">
+                <img
+                  src={s.img}
+                  alt=""
+                  className="absolute left-1/2 top-1/2 h-[2000%] w-[2000%] -translate-x-1/2 -translate-y-1/2 object-contain"
+                />
+              </div>
+              <h3 className="text-base font-semibold text-ink">{s.title}</h3>
+              <p className="text-sm text-muted">{s.text}</p>
             </div>
           ))}
         </div>

@@ -3,7 +3,7 @@ import { Search, ChevronRight, ChevronLeft, ChevronDown, X, Calendar, Clock } fr
 import Shell from '../components/Shell.jsx'
 import { mentors, directions } from '../data/mentors.js'
 import heroMentors from '../../media/secondpage.png'
-import icoSuccess from '../../media/Success.png'
+import SuccessCheck from '../components/SuccessCheck.jsx'
 
 function initials(name) {
   const p = name.split(' ')
@@ -53,7 +53,7 @@ export default function Mentors() {
               Выберите наставника и получите помощь от специалистов из своего университета.
             </p>
           </div>
-          <img src={heroMentors} alt="" className="hidden w-[300px] object-contain md:block lg:w-[380px]" />
+          <img src={heroMentors} alt="" className="hidden object-contain md:block md:w-[420px] lg:w-[520px]" />
         </div>
 
         {/* Search */}
@@ -216,8 +216,8 @@ export default function Mentors() {
       {success && (
         <Overlay onClose={closeAll}>
           <div className="w-full max-w-sm rounded-2xl bg-white p-8 text-center shadow-card">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50">
-              <img src={icoSuccess} alt="" className="h-9 w-9 object-contain" />
+            <div className="mx-auto flex h-16 w-16 items-center justify-center">
+              <SuccessCheck size={64} />
             </div>
             <h2 className="mt-5 text-lg font-bold text-ink">Вы успешно записаны!</h2>
             <p className="mt-2 text-sm text-muted">

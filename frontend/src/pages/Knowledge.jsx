@@ -46,7 +46,7 @@ export default function Knowledge() {
               Ссылки на важные ресурсы БГИТУ и IT-сообщества. Все, что поможет вам в учебе и развитии.
             </p>
           </div>
-          <img src={heroKnowledge} alt="" className="hidden w-[320px] object-contain md:block lg:w-[400px]" />
+          <img src={heroKnowledge} alt="" className="hidden object-contain md:block md:w-[420px] lg:w-[520px]" />
         </div>
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

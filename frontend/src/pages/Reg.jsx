@@ -2,13 +2,15 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import Logo from '../components/Logo.jsx'
+import AuthBackground from '../components/AuthBackground.jsx'
 
 export default function Reg() {
   const [show1, setShow1] = useState(false)
   const [show2, setShow2] = useState(false)
   return (
-    <div className="flex min-h-screen items-center justify-center bg-canvas px-4 py-12">
-      <div className="card w-full max-w-md p-8">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-canvas px-4 py-12">
+      <AuthBackground />
+      <div className="card relative z-10 w-full max-w-md p-8">
         <div className="flex flex-col items-center text-center">
           <div className="mb-3 flex items-center gap-2">
             <Logo size={34} />

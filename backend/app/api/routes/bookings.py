@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_db
-from app.api.routes.auth import get_current_user  # Зависимость для получения текущего юзера
+from app.api.deps import get_current_user, get_db
 from app.models.booking import Booking
-from app.models.mentor import Slot
-from app.models.user import User  # Твоя модель пользователя
+from app.models.constants import BookingStatus
+from app.models.slot import Slot
+from app.models.user import User
 from app.schemas.booking import BookingCreate, BookingRead
 
 router = APIRouter()
@@ -34,13 +34,16 @@ def create_booking(
     # 3. Занимаем слот
     slot.is_free = False
 
-    # 4. Создаем бронь (по умолчанию статус 'pending' зашит на уровне модели БД)
+    # 4. Создаем бронь. Дату/время копируем из слота (денормализация для
+    #    профиля и статистики Dev A). Статус по умолчанию 'pending'.
     db_booking = Booking(
         user_id=current_user.id,
         mentor_id=booking_in.mentor_id,
         slot_id=booking_in.slot_id,
+        scheduled_date=slot.date,
+        scheduled_time=slot.time,
         format=booking_in.format,
-        comment=booking_in.comment
+        comment=booking_in.comment,
     )
 
     db.add(db_booking)
@@ -76,14 +79,14 @@ def cancel_booking(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Вы не можете отменить чужую запись.")
 
     # Нельзя отменить то, что уже завершено или отменено
-    if booking.status in ("completed", "cancelled"):
+    if booking.status in (BookingStatus.COMPLETED, BookingStatus.CANCELLED):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Нельзя отменить бронь со статусом '{booking.status}'."
         )
 
     # Меняем статус брони
-    booking.status = "cancelled"
+    booking.status = BookingStatus.CANCELLED
 
     # ОСВОБОЖДАЕМ СЛОТ в расписании ментора, чтобы другие снова могли записаться!
     slot = db.get(Slot, booking.slot_id)

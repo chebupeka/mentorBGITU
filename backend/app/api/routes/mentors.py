@@ -3,8 +3,9 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
-from app.models.mentor import Mentor, Slot  # Импортируем модель Slot для расписания
-from app.schemas.mentor import PaginatedMentors, MentorRead, SlotRead  # Добавили MentorRead и SlotRead
+from app.models.mentor import Mentor
+from app.models.slot import Slot
+from app.schemas.mentor import MentorRead, PaginatedMentors, SlotRead
 
 router = APIRouter()
 

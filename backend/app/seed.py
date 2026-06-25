@@ -14,6 +14,7 @@ from app.models.booking import Booking
 from app.models.constants import BookingStatus
 from app.models.content import KnowledgeResource, Review
 from app.models.mentor import Mentor
+from app.models.slot import Slot
 from app.models.user import User
 
 MENTORS = [
@@ -72,22 +73,42 @@ def run() -> None:
         db.add(demo)
         db.flush()  # получить id
 
+        # Слоты в расписании менторов
+        slot_active = Slot(
+            mentor_id=mentors[0].id,
+            date=date.today() + timedelta(days=2), time="18:00", is_free=False,
+        )
+        slot_pending = Slot(
+            mentor_id=mentors[1].id,
+            date=date.today() + timedelta(days=5), time="19:00", is_free=False,
+        )
+        slot_done = Slot(
+            mentor_id=mentors[0].id,
+            date=date.today() - timedelta(days=3), time="17:00", is_free=False,
+        )
+        # Несколько свободных слотов для записи через UI
+        free_slots = [
+            Slot(mentor_id=mentors[0].id, date=date.today() + timedelta(days=d), time=t)
+            for d in (1, 3, 4) for t in ("16:00", "18:00")
+        ]
+        db.add_all([slot_active, slot_pending, slot_done, *free_slots])
+        db.flush()
+
         db.add_all([
             Booking(
-                user_id=demo.id, mentor_id=mentors[0].id,
-                scheduled_date=date.today() + timedelta(days=2),
-                scheduled_time="18:00", format="Яндекс Телемост",
-                status=BookingStatus.ACTIVE,
+                user_id=demo.id, mentor_id=mentors[0].id, slot_id=slot_active.id,
+                scheduled_date=slot_active.date, scheduled_time=slot_active.time,
+                format="Яндекс Телемост", status=BookingStatus.ACTIVE,
             ),
             Booking(
-                user_id=demo.id, mentor_id=mentors[1].id,
-                scheduled_date=date.today() + timedelta(days=5),
-                scheduled_time="19:00", status=BookingStatus.PENDING,
+                user_id=demo.id, mentor_id=mentors[1].id, slot_id=slot_pending.id,
+                scheduled_date=slot_pending.date, scheduled_time=slot_pending.time,
+                status=BookingStatus.PENDING,
             ),
             Booking(
-                user_id=demo.id, mentor_id=mentors[0].id,
-                scheduled_date=date.today() - timedelta(days=3),
-                scheduled_time="17:00", status=BookingStatus.COMPLETED,
+                user_id=demo.id, mentor_id=mentors[0].id, slot_id=slot_done.id,
+                scheduled_date=slot_done.date, scheduled_time=slot_done.time,
+                status=BookingStatus.COMPLETED,
             ),
         ])
         db.commit()

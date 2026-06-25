@@ -21,6 +21,10 @@ class Booking(Base):
     mentor_id: Mapped[int] = mapped_column(
         ForeignKey("mentors.id", ondelete="CASCADE"), index=True, nullable=False
     )
+    slot_id: Mapped[int | None] = mapped_column(
+        ForeignKey("slots.id", ondelete="SET NULL"), index=True, nullable=True
+    )
+    # денормализация из слота — чтобы профиль/статистика читались без join
     scheduled_date: Mapped[date] = mapped_column(Date, nullable=False)
     scheduled_time: Mapped[str] = mapped_column(String(5), nullable=False)  # "18:00"
     format: Mapped[str] = mapped_column(String(80), default="Яндекс Телемост", nullable=False)

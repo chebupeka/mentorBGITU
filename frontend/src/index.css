@@ -4,6 +4,26 @@
 
 :root {
   color-scheme: light;
+  --canvas: #f5f7fa;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --line: #e6eaf0;
+  --surface: #ffffff;   /* карточки (bg-white) */
+  --surface-2: #f8fafc; /* slate-50 */
+  --surface-3: #f1f5f9; /* slate-100 */
+  --brand-50: #eef6ff;
+}
+
+html.dark {
+  color-scheme: dark;
+  --canvas: #0b1220;
+  --ink: #e6edf6;
+  --muted: #93a1b5;
+  --line: #1e293b;
+  --surface: #111a2b;
+  --surface-2: #0f1830;
+  --surface-3: #1e293b;
+  --brand-50: #11233b;
 }
 
 html,
@@ -14,11 +34,35 @@ body,
 
 body {
   margin: 0;
-  background: #f5f7fa;
-  color: #0f172a;
+  background: var(--canvas);
+  color: var(--ink);
   font-family: 'Inter', system-ui, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* ===== Тёмная тема: переопределение захардкоженных утилит ===== */
+.dark .bg-white { background-color: var(--surface) !important; }
+.dark .bg-slate-50 { background-color: var(--surface-2) !important; }
+.dark .bg-slate-100 { background-color: var(--surface-3) !important; }
+.dark .hover\:bg-slate-50:hover { background-color: var(--surface-2) !important; }
+.dark .hover\:bg-slate-100:hover { background-color: var(--surface-3) !important; }
+.dark .hover\:bg-slate-200:hover { background-color: #243043 !important; }
+.dark .text-slate-300,
+.dark .text-slate-400,
+.dark .text-slate-500,
+.dark .text-slate-600 { color: var(--muted) !important; }
+.dark .border-line { border-color: var(--line) !important; }
+.dark .bg-canvas { background-color: var(--canvas) !important; }
+
+/* ===== Плавный круговой переход темы (View Transitions API) ===== */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) { z-index: 1; }
+::view-transition-new(root) { z-index: 2; }
 
 @layer components {
   .container-page {

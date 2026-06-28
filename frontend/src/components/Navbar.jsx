@@ -2,6 +2,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import Logo from './Logo.jsx'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { useToast } from './Toast.jsx'
+import ThemeToggle from '../theme/ThemeToggle.jsx'
 
 const baseNav = [
   { to: '/', label: 'Главная' },
@@ -57,6 +58,8 @@ export default function Navbar() {
         ))}
       </nav>
 
+      <div className="flex items-center gap-3">
+        <ThemeToggle />
       {isAuthed ? (
         <div className="flex items-center gap-3">
           <Link to="/profile" className="flex items-center gap-2.5">
@@ -80,6 +83,7 @@ export default function Navbar() {
           <Link to="/register" className="btn-primary">Регистрация</Link>
         </div>
       )}
+      </div>
     </>
   )
 

@@ -5,6 +5,7 @@ import Logo from '../components/Logo.jsx'
 import AuthBackground from '../components/AuthBackground.jsx'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { useToast } from '../components/Toast.jsx'
+import ThemeToggle from '../theme/ThemeToggle.jsx'
 
 export default function Reg() {
   const [show1, setShow1] = useState(false)
@@ -55,6 +56,7 @@ export default function Reg() {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-canvas px-4 py-12">
       <AuthBackground />
+      <ThemeToggle floating />
       <div className="card relative z-10 w-full max-w-md p-8">
         <div className="flex flex-col items-center text-center">
           <div className="mb-3 flex items-center gap-2">

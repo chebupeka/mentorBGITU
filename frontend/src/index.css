@@ -55,6 +55,13 @@ body {
 .dark .border-line { border-color: var(--line) !important; }
 .dark .bg-canvas { background-color: var(--canvas) !important; }
 
+/* Цветные «pastel» фоны статусов/иконок — тёмные варианты */
+.dark .bg-amber-50 { background-color: #2a2210 !important; }
+.dark .bg-emerald-50 { background-color: #0e2a20 !important; }
+.dark .bg-red-50 { background-color: #2a1417 !important; }
+.dark .border-amber-200 { border-color: #4a3a12 !important; }
+.dark .border-emerald-200 { border-color: #1a4536 !important; }
+
 /* ===== Плавный круговой переход темы (View Transitions API) ===== */
 ::view-transition-old(root),
 ::view-transition-new(root) {

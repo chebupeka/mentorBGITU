@@ -3,9 +3,9 @@ import Logo from './Logo.jsx'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { useToast } from './Toast.jsx'
 
-const nav = [
+const baseNav = [
   { to: '/', label: 'Главная' },
-  { to: '/mentors', label: 'Менторы' },
+  { to: '/mentors', label: 'Менторы', studentOnly: true },
   { to: '/knowledge', label: 'База знаний' },
 ]
 
@@ -28,6 +28,10 @@ export default function Navbar() {
     toast.success('Вы вышли из аккаунта')
     navigate('/login')
   }
+
+  // Менторам вкладка «Менторы» не нужна — они не записываются
+  const isMentor = !!user?.mentor_id
+  const nav = baseNav.filter((n) => !(n.studentOnly && isMentor))
 
   const content = (
     <>

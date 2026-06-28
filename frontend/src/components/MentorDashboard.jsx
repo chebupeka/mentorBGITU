@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Calendar, Clock, Mail, Check, X, MessageSquare } from 'lucide-react'
+import { Calendar, Clock, Mail, Check, X, MessageSquare, Plus, Trash2 } from 'lucide-react'
 import { apiFetch } from '../lib/api.js'
 import { useApiData, formatDate, initials } from '../lib/useApi.js'
 import { useAuth } from '../auth/AuthContext.jsx'
@@ -67,6 +67,9 @@ export default function MentorDashboard() {
               </div>
             ))}
       </section>
+
+      {/* Schedule */}
+      <ScheduleSection />
 
       {/* Requests */}
       <section>
@@ -156,5 +159,124 @@ export default function MentorDashboard() {
         )}
       </section>
     </div>
+  )
+}
+
+const TIME_OPTIONS = [
+  '10:00', '11:00', '12:00', '13:00', '14:00',
+  '15:00', '16:00', '17:00', '18:00', '19:00', '20:00',
+]
+
+function ScheduleSection() {
+  const { token } = useAuth()
+  const toast = useToast()
+  const { data: slots, loading, reload } = useApiData('/mentor/slots', { auth: true })
+  const today = new Date().toISOString().slice(0, 10)
+  const [date, setDate] = useState(today)
+  const [time, setTime] = useState('18:00')
+  const [busy, setBusy] = useState(false)
+  const [delId, setDelId] = useState(null)
+
+  async function addSlot(e) {
+    e.preventDefault()
+    setBusy(true)
+    try {
+      await apiFetch('/mentor/slots', { method: 'POST', token, body: { date, time } })
+      toast.success('Слот добавлен')
+      reload()
+    } catch (err) {
+      toast.error(err.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function removeSlot(id) {
+    setDelId(id)
+    try {
+      await apiFetch(`/mentor/slots/${id}`, { method: 'DELETE', token })
+      toast.success('Слот удалён')
+      reload()
+    } catch (err) {
+      toast.error(err.message)
+    } finally {
+      setDelId(null)
+    }
+  }
+
+  const list = slots || []
+
+  return (
+    <section>
+      <h2 className="text-xl font-bold text-ink">Моё расписание</h2>
+      <p className="mt-1 text-sm text-muted">
+        Добавьте свободное время — студенты увидят его при записи.
+      </p>
+
+      {/* Форма добавления */}
+      <form onSubmit={addSlot} className="card mt-5 flex flex-wrap items-end gap-4 p-5">
+        <div>
+          <label className="label">Дата</label>
+          <input
+            type="date"
+            min={today}
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="field"
+            required
+          />
+        </div>
+        <div>
+          <label className="label">Время</label>
+          <select value={time} onChange={(e) => setTime(e.target.value)} className="field">
+            {TIME_OPTIONS.map((t) => (
+              <option key={t}>{t}</option>
+            ))}
+          </select>
+        </div>
+        <button type="submit" disabled={busy} className="btn-primary py-2.5 disabled:opacity-60">
+          <Plus size={16} /> Добавить слот
+        </button>
+      </form>
+
+      {/* Список слотов */}
+      {loading ? (
+        <p className="mt-4 text-sm text-muted">Загрузка расписания…</p>
+      ) : list.length === 0 ? (
+        <div className="card mt-4 p-6 text-sm text-muted">
+          Пока нет слотов. Добавьте время выше.
+        </div>
+      ) : (
+        <div className="mt-4 flex flex-wrap gap-3">
+          {list.map((s) => (
+            <div
+              key={s.id}
+              className={`flex items-center gap-3 rounded-xl border px-4 py-2.5 text-sm ${
+                s.is_free ? 'border-line bg-white' : 'border-amber-200 bg-amber-50'
+              }`}
+            >
+              <span className="flex items-center gap-1.5 text-muted">
+                <Calendar size={14} /> {formatDate(s.date)}
+              </span>
+              <span className="flex items-center gap-1.5 font-medium text-ink">
+                <Clock size={14} /> {s.time}
+              </span>
+              {s.is_free ? (
+                <button
+                  onClick={() => removeSlot(s.id)}
+                  disabled={delId === s.id}
+                  className="text-slate-400 transition hover:text-red-500 disabled:opacity-50"
+                  title="Удалить слот"
+                >
+                  <Trash2 size={15} />
+                </button>
+              ) : (
+                <span className="text-xs font-medium text-amber-600">занят</span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   )
 }

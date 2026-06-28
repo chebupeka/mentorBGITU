@@ -6,6 +6,15 @@ import Profile from './pages/Profile.jsx'
 import Mentors from './pages/Mentors.jsx'
 import Knowledge from './pages/Knowledge.jsx'
 import RequireAuth from './auth/RequireAuth.jsx'
+import { Navigate } from 'react-router-dom'
+import { useAuth } from './auth/AuthContext.jsx'
+
+// Доступ только студентам: ментора уводим в его кабинет
+function StudentOnly({ children }) {
+  const { user } = useAuth()
+  if (user?.mentor_id) return <Navigate to="/profile" replace />
+  return children
+}
 
 export default function App() {
   return (
@@ -25,7 +34,9 @@ export default function App() {
         path="/mentors"
         element={
           <RequireAuth>
-            <Mentors />
+            <StudentOnly>
+              <Mentors />
+            </StudentOnly>
           </RequireAuth>
         }
       />

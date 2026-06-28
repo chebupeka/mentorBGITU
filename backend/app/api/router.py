@@ -10,6 +10,9 @@ api_router.include_router(profile.router, prefix="/profile", tags=["profile"])
 api_router.include_router(stats.router, prefix="/stats", tags=["stats"])
 api_router.include_router(content.router, tags=["content"])  # /reviews, /resources
 
+from app.api.routes import mentor_panel
+api_router.include_router(mentor_panel.router, prefix="/mentor", tags=["Mentor panel"])
+
 # --- Dev B ---
 from app.api.routes import mentors, bookings
 api_router.include_router(mentors.router, prefix="/mentors", tags=["Mentors & Slots"])

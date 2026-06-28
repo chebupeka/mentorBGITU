@@ -4,6 +4,7 @@ import Logo from '../components/Logo.jsx'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { useApiData, formatDate, initials } from '../lib/useApi.js'
 import { StatCardSkeleton } from '../components/Skeleton.jsx'
+import MentorDashboard from '../components/MentorDashboard.jsx'
 import heroProfile from '../../media/firstpage.png'
 import icoCalendar from '../../media/Calendar.png'
 import icoSuccess from '../../media/Success.png'
@@ -49,6 +50,10 @@ export default function Profile() {
           <img src={heroProfile} alt="Личный кабинет" className="hidden w-[360px] object-contain md:block" />
         </section>
 
+        {user?.mentor_id ? (
+          <MentorDashboard />
+        ) : (
+        <>
         {/* Stat cards */}
         <section className="grid gap-5 md:grid-cols-3">
           {pLoading
@@ -140,6 +145,8 @@ export default function Profile() {
             </button>
           </div>
         </section>
+        </>
+        )}
       </div>
     </Shell>
   )

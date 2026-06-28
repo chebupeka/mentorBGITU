@@ -16,6 +16,7 @@ class UserRead(BaseModel):
     first_name: str | None
     last_name: str | None
     is_active: bool
+    mentor_id: int | None = None
 
 
 class Token(BaseModel):

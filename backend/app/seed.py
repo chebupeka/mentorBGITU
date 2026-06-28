@@ -10,8 +10,6 @@ from sqlalchemy import select
 
 from app.core.security import hash_password
 from app.db.session import SessionLocal
-from app.models.booking import Booking
-from app.models.constants import BookingStatus
 from app.models.content import KnowledgeResource, Review
 from app.models.mentor import Mentor
 from app.models.slot import Slot
@@ -73,46 +71,30 @@ def run() -> None:
         db.add(demo)
         db.flush()  # получить id
 
-        # Слоты в расписании менторов
-        slot_active = Slot(
-            mentor_id=mentors[0].id,
-            date=date.today() + timedelta(days=2), time="18:00", is_free=False,
-        )
-        slot_pending = Slot(
-            mentor_id=mentors[1].id,
-            date=date.today() + timedelta(days=5), time="19:00", is_free=False,
-        )
-        slot_done = Slot(
-            mentor_id=mentors[0].id,
-            date=date.today() - timedelta(days=3), time="17:00", is_free=False,
-        )
-        # Несколько свободных слотов для записи через UI
+        # Свободные слоты в расписании каждого ментора — чтобы запись шла «вживую».
+        # Никаких готовых заявок не создаём: они появятся, когда студент запишется.
         free_slots = [
-            Slot(mentor_id=mentors[0].id, date=date.today() + timedelta(days=d), time=t)
-            for d in (1, 3, 4) for t in ("16:00", "18:00")
+            Slot(mentor_id=m.id, date=date.today() + timedelta(days=d), time=t)
+            for m in mentors
+            for d in (1, 2, 3, 5, 7)
+            for t in ("16:00", "18:00")
         ]
-        db.add_all([slot_active, slot_pending, slot_done, *free_slots])
-        db.flush()
+        db.add_all(free_slots)
 
-        db.add_all([
-            Booking(
-                user_id=demo.id, mentor_id=mentors[0].id, slot_id=slot_active.id,
-                scheduled_date=slot_active.date, scheduled_time=slot_active.time,
-                format="Яндекс Телемост", status=BookingStatus.ACTIVE,
-            ),
-            Booking(
-                user_id=demo.id, mentor_id=mentors[1].id, slot_id=slot_pending.id,
-                scheduled_date=slot_pending.date, scheduled_time=slot_pending.time,
-                status=BookingStatus.PENDING,
-            ),
-            Booking(
-                user_id=demo.id, mentor_id=mentors[0].id, slot_id=slot_done.id,
-                scheduled_date=slot_done.date, scheduled_time=slot_done.time,
-                status=BookingStatus.COMPLETED,
-            ),
-        ])
+        # Аккаунт наставника: Сергей Бондаренко (mentors[0])
+        sergey = User(
+            email="sergey@bgitu.ru",
+            hashed_password=hash_password("mentor123"),
+            first_name="Сергей",
+            last_name="Бондаренко",
+            mentor_id=mentors[0].id,
+        )
+        db.add(sergey)
+
         db.commit()
-        print("Сид выполнен. Демо-логин: demo@bgitu.ru / demo123")
+        print("Сид выполнен.")
+        print("  Студент:  demo@bgitu.ru / demo123")
+        print("  Ментор:   sergey@bgitu.ru / mentor123")
     finally:
         db.close()
 

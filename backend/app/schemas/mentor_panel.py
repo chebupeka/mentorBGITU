@@ -1,6 +1,11 @@
 from datetime import date
 
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+
+class SlotCreate(BaseModel):
+    date: date
+    time: str = Field(pattern=r"^([01]\d|2[0-3]):[0-5]\d$", description="Время HH:MM")
 
 
 class MentorBookingRead(BaseModel):

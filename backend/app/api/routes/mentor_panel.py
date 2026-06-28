@@ -1,4 +1,6 @@
-"""Кабинет наставника: входящие заявки, принятие/отклонение, почта клиента."""
+"""Кабинет наставника: заявки, принятие/отклонение, почта клиента, расписание."""
+from datetime import date as date_type
+
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import func, select
 
@@ -7,7 +9,8 @@ from app.models.booking import Booking
 from app.models.constants import BookingStatus
 from app.models.slot import Slot
 from app.models.user import User
-from app.schemas.mentor_panel import MentorBookingRead, MentorStats
+from app.schemas.mentor import SlotRead
+from app.schemas.mentor_panel import MentorBookingRead, MentorStats, SlotCreate
 
 router = APIRouter()
 
@@ -87,6 +90,60 @@ def accept_booking(booking_id: int, current_user: CurrentUser, db: DbSession):
     db.refresh(booking)
     client = db.get(User, booking.user_id)
     return _to_read(booking, client)
+
+
+# ---------- Расписание наставника (слоты) ----------
+@router.get("/slots", response_model=list[SlotRead])
+def my_slots(current_user: CurrentUser, db: DbSession):
+    mentor_id = _ensure_mentor(current_user)
+    return db.scalars(
+        select(Slot)
+        .where(Slot.mentor_id == mentor_id)
+        .order_by(Slot.date.asc(), Slot.time.asc())
+    ).all()
+
+
+@router.post("/slots", response_model=SlotRead, status_code=status.HTTP_201_CREATED)
+def add_slot(data: SlotCreate, current_user: CurrentUser, db: DbSession):
+    mentor_id = _ensure_mentor(current_user)
+    if data.date < date_type.today():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Нельзя добавить слот в прошлом",
+        )
+    exists = db.scalar(
+        select(Slot).where(
+            Slot.mentor_id == mentor_id,
+            Slot.date == data.date,
+            Slot.time == data.time,
+        )
+    )
+    if exists:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Такой слот уже есть"
+        )
+    slot = Slot(mentor_id=mentor_id, date=data.date, time=data.time, is_free=True)
+    db.add(slot)
+    db.commit()
+    db.refresh(slot)
+    return slot
+
+
+@router.delete("/slots/{slot_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_slot(slot_id: int, current_user: CurrentUser, db: DbSession):
+    mentor_id = _ensure_mentor(current_user)
+    slot = db.get(Slot, slot_id)
+    if not slot or slot.mentor_id != mentor_id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Слот не найден"
+        )
+    if not slot.is_free:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Слот занят записью — сначала отклоните заявку",
+        )
+    db.delete(slot)
+    db.commit()
 
 
 @router.post("/bookings/{booking_id}/decline", response_model=MentorBookingRead)

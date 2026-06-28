@@ -19,6 +19,12 @@ def create_booking(
         current_user: User = Depends(get_current_user)
 ):
     """Создание бронирования (Запись на консультацию)."""
+    # 0. Наставники не записываются к наставникам
+    if current_user.mentor_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Наставник не может записываться к наставникам.",
+        )
     # 1. Проверяем, существует ли слот
     slot = db.get(Slot, booking_in.slot_id)
     if not slot:
